@@ -237,11 +237,19 @@ st.metric("NEWS Score",ews)
 st.subheader("AI Explanation")
 
 st.write("""
-The ICU Guardian deep learning model continuously analyzes
-temporal vital patterns using LSTM architecture.
+The AI ICU Guardian system performs continuous clinical surveillance
+of physiological parameters including heart rate, oxygen saturation,
+and respiratory rate.
 
-Physiological signals including heart rate, oxygen saturation
-and respiratory rate are used to estimate deterioration risk.
+The predictive model evaluates temporal trends in these vital signs
+to identify early indicators of patient deterioration. Subtle
+variations in cardiopulmonary stability are analyzed to estimate
+the probability of clinical decline within short-term monitoring
+intervals.
+
+This analysis assists clinicians in prioritizing patients who may
+require early intervention, escalation of monitoring, or proactive
+critical care management.
 """)
 
 # -----------------------------
@@ -538,24 +546,33 @@ def generate_pdf():
 
     pdf.ln(10)
 
-    # -----------------------------
-    # AI EXPLANATION
-    # -----------------------------
+ # -----------------------------
+# AI EXPLANATION
+# -----------------------------
 
     pdf.set_font("Arial","B",14)
-    pdf.cell(0,10,"AI Explanation",0,1)
+    pdf.cell(0,10,"AI Clinical Interpretation",0,1)
 
     pdf.set_font("Arial","",12)
 
     explanation="""
-The AI ICU Guardian monitoring system analyzes physiological signals
-including heart rate, oxygen saturation, and respiratory rate using
-machine learning models.
+    The AI ICU Guardian monitoring platform continuously evaluates
+    patient physiological data streams including heart rate, oxygen
+    saturation (SpO2), and respiratory rate.
 
-Temporal trends are evaluated to estimate short-term patient
-deterioration risk. These predictions support clinicians in making
-timely medical decisions and preventive interventions.
-"""
+    Advanced machine learning models analyze short-term temporal
+    variations in these vital parameters to detect patterns associated
+    with early clinical deterioration.
+
+    By identifying abnormal physiological trends before they become
+    clinically apparent, the system supports proactive ICU management,
+    allowing clinicians to initiate timely diagnostic evaluation,
+    optimize monitoring strategies, and consider preventive therapeutic
+    interventions.
+
+    The AI-generated risk estimates should be interpreted alongside
+    clinical judgment and standard ICU assessment protocols.
+    """
 
     pdf.multi_cell(0,8,explanation)
 
