@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor's Vitals Dashboard</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; background-color: #f4f4f9; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { color: #333; }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;}
+        button { background-color: #007bff; color: white; border: none; padding: 10px 20px; margin-top: 15px; cursor: pointer; border-radius: 4px; }
+        button:hover { background-color: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .diagnosis-box { background-color: #e8f4fd; border-left: 5px solid #007bff; padding: 10px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>🏥 Doctor's Dashboard</h1>
+
+    <!-- 1. Patient Selection -->
+    <div class="card">
+        <h2>1. Select Patient</h2>
+        <label>Select Patient Name:</label>
+        <select id="patientSelect" onchange="loadPatientData()">
+            <option value="">-- Choose a Patient --</option>
+            <!-- Options will be populated by JS -->
+        </select>
+    </div>
+
+    <!-- 2. View History & Diagnosis -->
+    <div id="patientDetails" class="card" style="display:none;">
+        <h2 id="patientNameDisplay">Patient Name</h2>
+        
+        <div class="diagnosis-box">
+            <label>Current Diagnosis / Notes:</label>
+            <textarea id="diagnosisInput" rows="3" placeholder="Enter diagnosis here..."></textarea>
+            <button onclick="saveDiagnosis()">Update Diagnosis</button>
+        </div>
+
+        <h3>Vital History</h3>
+        <table id="vitalsTable">
+            <thead>
+                <tr>
+                    <th>Date/Time</th>
+                    <th>Heart Rate</th>
+                    <th>Blood Pressure</th>
+                    <th>Temp (°C)</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 3. Add New Vitals (Simulating your existing code) -->
+    <div class="card">
+        <h2>2. Upload New Vitals</h2>
+        <label>Patient Name:</label>
+        <input type="text" id="newPatientName" placeholder="Enter Name (e.g., John Doe)">
+        
+        <label>Heart Rate (bpm):</label>
+        <input type="number" id="newHeartRate">
+        
+        <label>Blood Pressure (mmHg):</label>
+        <input type="text" id="newBP" placeholder="e.g., 120/80">
+        
+        <label>Temperature (°C):</label>
+        <input type="number" id="newTemp" step="0.1">
+
+        <button onclick="addNewVital()">Save Vitals</button>
+    </div>
+
+    <script>
+        // --- DATA MANAGEMENT ---
+        
+        // Load data from LocalStorage (Simulating a Database)
+        function getDB() {
+            return JSON.parse(localStorage.getItem('hospitalDB')) || [];
+        }
+
+        function saveDB(data) {
+            localStorage.setItem('hospitalDB', JSON.stringify(data));
+        }
+
+        // 1. Add New Vitals
+        function addNewVital() {
+            const name = document.getElementById('newPatientName').value;
+            const hr = document.getElementById('newHeartRate').value;
+            const bp = document.getElementById('newBP').value;
+            const temp = document.getElementById('newTemp').value;
+
+            if(!name || !hr) { alert("Please enter at least a name and heart rate."); return; }
+
+            const db = getDB();
+            
+            // Check if patient exists, if not create entry
+            let patientRecord = db.find(p => p.name.toLowerCase() === name.toLowerCase());
+            
+            if (!patientRecord) {
+                patientRecord = { 
+                    name: name, 
+                    vitals: [], 
+                    diagnosis: "" 
+                };
+                db.push(patientRecord);
+            }
+
+            // Add new vital entry
+            patientRecord.vitals.push({
+                date: new Date().toLocaleString(),
+                heartRate: hr,
+                bloodPressure: bp,
+                temp: temp,
+                notes: "New Entry"
+            });
+
+            saveDB(db);
+            alert("Vitals Saved!");
+            
+            // Clear inputs
+            document.getElementById('newHeartRate').value = '';
+            document.getElementById('newBP').value = '';
+            document.getElementById('newTemp').value = '';
+            
+            updatePatientDropdown();
+        }
+
+        // 2. Update Patient Dropdown
+        function updatePatientDropdown() {
+            const db = getDB();
+            const select = document.getElementById('patientSelect');
+            select.innerHTML = '<option value="">-- Choose a Patient --</option>';
+            
+            db.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.name;
+                option.textContent = p.name;
+                select.appendChild(option);
+            });
+        }
+
+        // 3. Load Patient Data for Doctor
+        function loadPatientData() {
+            const name = document.getElementById('patientSelect').value;
+            const detailsDiv = document.getElementById('patientDetails');
+            const tableBody = document.querySelector('#vitalsTable tbody');
+            
+            if (!name) {
+                detailsDiv.style.display = 'none';
+                return;
+            }
+
+            const db = getDB();
+            const patient = db.find(p => p.name.toLowerCase() === name.toLowerCase());
+
+            if (patient) {
+                detailsDiv.style.display = 'block';
+                document.getElementById('patientNameDisplay').textContent = patient.name;
+                
+                // Load Diagnosis
+                document.getElementById('diagnosisInput').value = patient.diagnosis || "";
+
+                // Load Vitals Table
+                tableBody.innerHTML = "";
+                patient.vitals.forEach(v => {
+                    const row = `<tr>
+                        <td>${v.date}</td>
+                        <td>${v.heartRate}</td>
+                        <td>${v.bloodPressure}</td>
+                        <td>${v.temp}</td>
+                        <td>${v.notes}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            }
+        }
+
+        // 4. Save Diagnosis
+        function saveDiagnosis() {
+            const name = document.getElementById('patientSelect').value;
+            const diagnosis = document.getElementById('diagnosisInput').value;
+
+            if(!name) return;
+
+            const db = getDB();
+            const patient = db.find(p => p.name.toLowerCase() === name.toLowerCase());
+            
+            if(patient) {
+                patient.diagnosis = diagnosis;
+                saveDB(db);
+                alert("Diagnosis Updated!");
+            }
+        }
+
+        // Initialize
+        updatePatientDropdown();
+    </script>
+</body>
+</html>
