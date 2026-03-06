@@ -5,3 +5,4 @@ plotly
 torch
 fpdf
 streamlit-autorefresh
+matplotlib
