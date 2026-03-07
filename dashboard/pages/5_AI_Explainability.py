@@ -3,8 +3,15 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import random
+from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(layout="wide")
+
+# ------------------------------------------------
+# AUTO REFRESH (LIVE MONITOR)
+# ------------------------------------------------
+
+st_autorefresh(interval=2000,key="ai_refresh")
 
 st.title("🤖 AI Explainability – Risk Analysis")
 
@@ -37,20 +44,20 @@ list(patients.keys())
 st.write("Analyzing AI decision for Patient:",selected_patient)
 
 # ------------------------------------------------
-# SIMULATED CURRENT VITALS
+# SIMULATED CURRENT VITALS (LIVE)
 # ------------------------------------------------
 
 heart_rate=random.randint(70,110)
-spo2=random.randint(90,100)
+spo2=random.randint(92,100)
 resp_rate=random.randint(14,24)
 
 st.subheader("Current Vital Signs")
 
 c1,c2,c3=st.columns(3)
 
-c1.metric("Heart Rate",f"{heart_rate} bpm")
-c2.metric("SpO₂",f"{spo2}%")
-c3.metric("Resp Rate",f"{resp_rate}/min")
+c1.metric("🟢 Heart Rate",f"{heart_rate} bpm")
+c2.metric("🟡 SpO₂",f"{spo2}%")
+c3.metric("🔵 Resp Rate",f"{resp_rate}/min")
 
 # ------------------------------------------------
 # FEATURE IMPORTANCE CALCULATION
@@ -73,22 +80,32 @@ columns=["Vital Sign","Contribution"]
 
 st.subheader("AI Feature Contribution")
 
+colors=[
+"#00FF66",   # heart rate
+"#FFD400",   # spo2
+"#00D4FF"    # resp rate
+]
+
 fig=go.Figure()
 
 fig.add_trace(
 go.Bar(
 x=df["Vital Sign"],
-y=df["Contribution"]
+y=df["Contribution"],
+marker_color=colors
 )
 )
 
 fig.update_layout(
 template="plotly_dark",
+plot_bgcolor="black",
+paper_bgcolor="black",
 yaxis_title="Contribution to Risk",
-xaxis_title="Vital Sign"
+xaxis_title="Vital Sign",
+height=400
 )
 
-st.plotly_chart(fig,width="stretch")
+st.plotly_chart(fig,use_container_width=True)
 
 # ------------------------------------------------
 # PATIENT CLINICAL SUMMARY
@@ -123,7 +140,7 @@ columns=["Parameter","Value"]
 st.table(summary_df)
 
 # ------------------------------------------------
-# VISUAL RADAR
+# PHYSIOLOGICAL RADAR
 # ------------------------------------------------
 
 st.subheader("Physiological Radar")
@@ -137,9 +154,34 @@ fig_radar=go.Figure()
 fig_radar.add_trace(go.Scatterpolar(
 r=values,
 theta=categories,
-fill='toself'
+fill='toself',
+line=dict(color="#7c3aed")
 ))
 
-fig_radar.update_layout(template="plotly_dark")
+fig_radar.update_layout(
+template="plotly_dark",
+polar=dict(
+bgcolor="black"
+),
+height=400
+)
 
-st.plotly_chart(fig_radar,width="stretch")
+st.plotly_chart(fig_radar,use_container_width=True)
+
+# ------------------------------------------------
+# AI EXPLANATION PANEL
+# ------------------------------------------------
+
+st.subheader("AI Explanation")
+
+if risk < 40:
+
+    st.success("AI predicts patient condition is stable based on current vitals.")
+
+elif risk < 70:
+
+    st.warning("AI detects moderate risk due to deviations in vital signs.")
+
+else:
+
+    st.error("AI detects high deterioration risk. Immediate clinical review recommended.")

@@ -5,6 +5,25 @@ import random
 
 st.set_page_config(layout="wide")
 
+# ------------------------------------------------
+# PROFESSIONAL STYLE
+# ------------------------------------------------
+
+st.markdown("""
+<style>
+
+body{
+background-color:#050c18;
+}
+
+.metric-label{
+font-size:20px;
+font-weight:600;
+}
+
+</style>
+""",unsafe_allow_html=True)
+
 st.title("🏥 Hospital ICU Analytics")
 
 # ------------------------------------------------
@@ -62,13 +81,28 @@ mid=((df["Risk"]>=40)&(df["Risk"]<70)).sum()
 high=(df["Risk"]>=70).sum()
 
 fig=go.Figure(data=[go.Pie(
+
 labels=["Stable","Moderate","Critical"],
-values=[low,mid,high]
+values=[low,mid,high],
+
+marker=dict(
+colors=[
+"#22c55e",  # green
+"#facc15",  # yellow
+"#ef4444"   # red
+]
+),
+
+hole=0.35,
+textinfo="percent+label"
 )])
 
-fig.update_layout(template="plotly_dark")
+fig.update_layout(
+template="plotly_dark",
+height=420
+)
 
-st.plotly_chart(fig,width="stretch")
+st.plotly_chart(fig,use_container_width=True)
 
 # ------------------------------------------------
 # RISK BAR CHART
@@ -76,18 +110,35 @@ st.plotly_chart(fig,width="stretch")
 
 st.subheader("Patient Risk Levels")
 
+colors=[]
+
+for r in df["Risk"]:
+
+    if r < 40:
+        colors.append("#22c55e")
+    elif r < 70:
+        colors.append("#facc15")
+    else:
+        colors.append("#ef4444")
+
 fig2=go.Figure(go.Bar(
+
 x=df["Patient"],
-y=df["Risk"]
+y=df["Risk"],
+marker_color=colors
+
 ))
 
 fig2.update_layout(
+
 yaxis_title="Risk %",
 xaxis_title="Patient ID",
-template="plotly_dark"
+template="plotly_dark",
+height=420
+
 )
 
-st.plotly_chart(fig2,width="stretch")
+st.plotly_chart(fig2,use_container_width=True)
 
 # ------------------------------------------------
 # BED UTILIZATION
@@ -98,14 +149,21 @@ st.subheader("ICU Bed Utilization")
 beds=list(patients.values())
 
 fig3=go.Figure(go.Bar(
+
 x=beds,
-y=[1]*len(beds)
+y=[1]*len(beds),
+
+marker_color="#3b82f6"
+
 ))
 
 fig3.update_layout(
+
 xaxis_title="Bed Number",
 yaxis_title="Occupied",
-template="plotly_dark"
+template="plotly_dark",
+height=350
+
 )
 
-st.plotly_chart(fig3,width="stretch")
+st.plotly_chart(fig3,use_container_width=True)

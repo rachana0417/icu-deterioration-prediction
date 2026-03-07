@@ -5,8 +5,19 @@ import plotly.graph_objects as go
 import random
 import torch
 import torch.nn as nn
+from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(layout="wide")
+
+# ----------------------------------------------------------
+# AUTO REFRESH (LIVE MONITOR EFFECT)
+# ----------------------------------------------------------
+
+st_autorefresh(interval=2000,key="timeline_refresh")
+
+# ----------------------------------------------------------
+# PAGE TITLE
+# ----------------------------------------------------------
 
 st.title("📈 Patient Timeline & Vital History")
 
@@ -60,7 +71,8 @@ fig_hr=go.Figure()
 fig_hr.add_trace(
 go.Scatter(
 y=hr_history,
-mode="lines+markers",
+mode="lines",
+line=dict(color="#00FF66",width=3),
 name="Heart Rate"
 )
 )
@@ -68,10 +80,13 @@ name="Heart Rate"
 fig_hr.update_layout(
 yaxis_title="BPM",
 xaxis_title="Time",
-template="plotly_dark"
+template="plotly_dark",
+plot_bgcolor="black",
+paper_bgcolor="black",
+height=300
 )
 
-st.plotly_chart(fig_hr,width="stretch")
+st.plotly_chart(fig_hr,use_container_width=True)
 
 # ----------------------------------------------------------
 # SPO2 HISTORY
@@ -84,7 +99,8 @@ fig_spo2=go.Figure()
 fig_spo2.add_trace(
 go.Scatter(
 y=spo2_history,
-mode="lines+markers",
+mode="lines",
+line=dict(color="#FFD400",width=3),
 name="SpO₂"
 )
 )
@@ -92,10 +108,13 @@ name="SpO₂"
 fig_spo2.update_layout(
 yaxis_title="SpO₂ %",
 xaxis_title="Time",
-template="plotly_dark"
+template="plotly_dark",
+plot_bgcolor="black",
+paper_bgcolor="black",
+height=300
 )
 
-st.plotly_chart(fig_spo2,width="stretch")
+st.plotly_chart(fig_spo2,use_container_width=True)
 
 # ----------------------------------------------------------
 # RESPIRATORY RATE HISTORY
@@ -108,7 +127,8 @@ fig_rr=go.Figure()
 fig_rr.add_trace(
 go.Scatter(
 y=rr_history,
-mode="lines+markers",
+mode="lines",
+line=dict(color="#00D4FF",width=3),
 name="Resp Rate"
 )
 )
@@ -116,10 +136,13 @@ name="Resp Rate"
 fig_rr.update_layout(
 yaxis_title="Breaths/min",
 xaxis_title="Time",
-template="plotly_dark"
+template="plotly_dark",
+plot_bgcolor="black",
+paper_bgcolor="black",
+height=300
 )
 
-st.plotly_chart(fig_rr,width="stretch")
+st.plotly_chart(fig_rr,use_container_width=True)
 
 # ----------------------------------------------------------
 # LSTM MODEL
@@ -191,7 +214,8 @@ fig_risk=go.Figure()
 fig_risk.add_trace(
 go.Scatter(
 y=risk_history,
-mode="lines+markers",
+mode="lines",
+line=dict(color="#FF3B3B",width=3),
 name="Risk %"
 )
 )
@@ -199,10 +223,13 @@ name="Risk %"
 fig_risk.update_layout(
 yaxis_title="Risk %",
 xaxis_title="Time",
-template="plotly_dark"
+template="plotly_dark",
+plot_bgcolor="black",
+paper_bgcolor="black",
+height=300
 )
 
-st.plotly_chart(fig_risk,width="stretch")
+st.plotly_chart(fig_risk,use_container_width=True)
 
 # ----------------------------------------------------------
 # PATIENT DETERIORATION ALERT

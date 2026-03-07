@@ -1,8 +1,9 @@
 streamlit
-numpy
 pandas
+numpy
 plotly
-torch
-fpdf
 matplotlib
+fpdf
+torch
 streamlit-autorefresh
+pyarrow

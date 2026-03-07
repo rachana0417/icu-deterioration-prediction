@@ -4,10 +4,88 @@ from datetime import datetime, timedelta
 
 st.set_page_config(layout="wide")
 
-st.title("🧑‍⚕️ Patient Clinical Profile")
+# ------------------------------------------------
+# PROFESSIONAL MEDICAL UI STYLE
+# ------------------------------------------------
+
+st.markdown("""
+<style>
+
+body{
+background:#0a1120;
+color:white;
+}
+
+/* PAGE TITLE */
+
+.title{
+font-size:34px;
+font-weight:700;
+margin-bottom:20px;
+}
+
+/* CARDS */
+
+.card{
+background:#121a2b;
+padding:25px;
+border-radius:12px;
+border:1px solid #1f2a44;
+box-shadow:0 4px 20px rgba(0,0,0,0.4);
+margin-bottom:20px;
+}
+
+/* SECTION HEADERS */
+
+.section{
+font-size:20px;
+font-weight:600;
+margin-bottom:15px;
+color:#9ecbff;
+}
+
+/* STATUS */
+
+.status{
+color:#22c55e;
+font-weight:600;
+}
+
+/* TIMELINE */
+
+.timeline{
+background:#121a2b;
+padding:20px;
+border-radius:10px;
+border:1px solid #1f2a44;
+}
+
+/* INFO PANEL */
+
+.info-panel{
+background:#1b3a5c;
+padding:15px;
+border-radius:8px;
+color:#dbeafe;
+}
+
+/* SIDEBAR */
+
+.css-1d391kg{
+background:#0f172a;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 # ------------------------------------------------
-# SAMPLE PATIENT DATABASE
+# TITLE
+# ------------------------------------------------
+
+st.markdown('<div class="title">🧑‍⚕️ Patient Clinical Profile</div>', unsafe_allow_html=True)
+
+# ------------------------------------------------
+# PATIENT DATABASE
 # ------------------------------------------------
 
 patients = {
@@ -24,7 +102,7 @@ patients = {
 }
 
 # ------------------------------------------------
-# SIDEBAR PATIENT SELECTION
+# SIDEBAR
 # ------------------------------------------------
 
 selected_patient = st.sidebar.selectbox(
@@ -35,13 +113,17 @@ list(patients.keys())
 name = patients[selected_patient]
 
 # ------------------------------------------------
-# GENERATE SAMPLE CLINICAL DATA
+# SAMPLE DATA
 # ------------------------------------------------
 
 age = random.randint(25,80)
 gender = random.choice(["Male","Female"])
 blood = random.choice(["A+","B+","O+","AB+","A-","B-"])
-doctor = random.choice(["Dr. Sharma","Dr. Patel","Dr. Iyer","Dr. Khan"])
+
+doctor = random.choice([
+"Dr. Sharma","Dr. Patel","Dr. Iyer","Dr. Khan"
+])
+
 diagnosis = random.choice([
 "Pneumonia",
 "Respiratory Failure",
@@ -53,24 +135,47 @@ diagnosis = random.choice([
 admission = datetime.now() - timedelta(hours=random.randint(2,48))
 
 # ------------------------------------------------
-# PROFILE CARD
+# MAIN LAYOUT
 # ------------------------------------------------
 
 col1,col2 = st.columns([1,2])
 
+# ------------------------------------------------
+# PATIENT DETAILS CARD
+# ------------------------------------------------
+
 with col1:
 
-    st.subheader("Patient Details")
+    st.markdown('<div class="card">',unsafe_allow_html=True)
 
-    st.metric("Patient ID",selected_patient)
-    st.metric("Name",name)
-    st.metric("Age",age)
-    st.metric("Gender",gender)
-    st.metric("Blood Group",blood)
+    st.markdown('<div class="section">Patient Details</div>',unsafe_allow_html=True)
+
+    st.write("**Patient ID**")
+    st.write(selected_patient)
+
+    st.write("**Name**")
+    st.write(name)
+
+    st.write("**Age**")
+    st.write(age)
+
+    st.write("**Gender**")
+    st.write(gender)
+
+    st.write("**Blood Group**")
+    st.write(blood)
+
+    st.markdown('</div>',unsafe_allow_html=True)
+
+# ------------------------------------------------
+# CLINICAL INFORMATION
+# ------------------------------------------------
 
 with col2:
 
-    st.subheader("Clinical Information")
+    st.markdown('<div class="card">',unsafe_allow_html=True)
+
+    st.markdown('<div class="section">Clinical Information</div>',unsafe_allow_html=True)
 
     st.write(f"**Diagnosis:** {diagnosis}")
     st.write(f"**Assigned Doctor:** {doctor}")
@@ -78,17 +183,27 @@ with col2:
 
     st.write("**Allergies:** None reported")
 
-    st.write("**Clinical Notes:**")
-    st.info(
-        "Patient currently under continuous ICU monitoring. "
-        "AI system is tracking vital signs and predicting deterioration risk."
+    st.write("**Monitoring Status:**")
+
+    st.markdown(
+        '<span class="status">● ICU AI Monitoring Active</span>',
+        unsafe_allow_html=True
     )
 
+    st.write("")
+
+    st.markdown(
+        '<div class="info-panel">Patient currently under continuous ICU monitoring. AI system is tracking vital signs and predicting deterioration risk.</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown('</div>',unsafe_allow_html=True)
+
 # ------------------------------------------------
-# MEDICAL TIMELINE
+# TIMELINE
 # ------------------------------------------------
 
-st.subheader("Recent Clinical Events")
+st.markdown('<div class="section">Recent Clinical Events</div>', unsafe_allow_html=True)
 
 events = [
 "Patient admitted to ICU",
@@ -98,5 +213,9 @@ events = [
 "Nurse observation recorded"
 ]
 
+st.markdown('<div class="timeline">',unsafe_allow_html=True)
+
 for e in events:
     st.write(f"• {e}")
+
+st.markdown('</div>',unsafe_allow_html=True)

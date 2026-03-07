@@ -5,6 +5,41 @@ from datetime import datetime
 
 st.set_page_config(layout="wide")
 
+# ------------------------------------------------
+# PROFESSIONAL STYLE
+# ------------------------------------------------
+
+st.markdown("""
+<style>
+
+body{
+background-color:#050c18;
+}
+
+.metric-label{
+font-size:20px;
+font-weight:600;
+}
+
+.alert-red{
+background-color:#2a0f0f;
+padding:15px;
+border-radius:8px;
+margin-bottom:10px;
+border-left:6px solid #ef4444;
+}
+
+.alert-yellow{
+background-color:#2a2a0f;
+padding:15px;
+border-radius:8px;
+margin-bottom:10px;
+border-left:6px solid #facc15;
+}
+
+</style>
+""",unsafe_allow_html=True)
+
 st.title("🚨 ICU Alert Center")
 
 # ------------------------------------------------
@@ -65,9 +100,9 @@ st.subheader("ICU Alert Summary")
 
 c1,c2,c3=st.columns(3)
 
-c1.metric("Critical Patients",(df["Status"]=="Critical").sum())
-c2.metric("Warning Patients",(df["Status"]=="Warning").sum())
-c3.metric("Stable Patients",(df["Status"]=="Stable").sum())
+c1.metric("🔴 Critical Patients",(df["Status"]=="Critical").sum())
+c2.metric("🟡 Warning Patients",(df["Status"]=="Warning").sum())
+c3.metric("🟢 Stable Patients",(df["Status"]=="Stable").sum())
 
 # ------------------------------------------------
 # CRITICAL ALERTS
@@ -85,8 +120,13 @@ else:
 
     for _,row in critical.iterrows():
 
-        st.error(
-            f"🚨 Patient {row['Patient ID']} | Bed {row['Bed']} | Risk {row['Risk %']}%"
+        st.markdown(
+        f"""
+        <div class="alert-red">
+        🚨 <b>Patient {row['Patient ID']}</b> | Bed {row['Bed']} | Risk {row['Risk %']}%
+        </div>
+        """,
+        unsafe_allow_html=True
         )
 
 # ------------------------------------------------
@@ -99,8 +139,13 @@ warning=df[df["Status"]=="Warning"]
 
 for _,row in warning.iterrows():
 
-    st.warning(
-        f"⚠ Patient {row['Patient ID']} | Bed {row['Bed']} | Risk {row['Risk %']}%"
+    st.markdown(
+    f"""
+    <div class="alert-yellow">
+    ⚠ <b>Patient {row['Patient ID']}</b> | Bed {row['Bed']} | Risk {row['Risk %']}%
+    </div>
+    """,
+    unsafe_allow_html=True
     )
 
 # ------------------------------------------------
@@ -109,4 +154,7 @@ for _,row in warning.iterrows():
 
 st.subheader("Alert Log")
 
-st.dataframe(df)
+st.dataframe(
+    df,
+    use_container_width=True
+)

@@ -10,14 +10,51 @@ from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(layout="wide")
 
+# ---------------------------------------------------------
+# PROFESSIONAL ICU THEME
+# ---------------------------------------------------------
+
+st.markdown("""
+<style>
+
+body{
+background:#071028;
+color:white;
+}
+
+.metric-card{
+background:#121c35;
+padding:18px;
+border-radius:12px;
+border:1px solid #1e2c4a;
+text-align:center;
+}
+
+.section{
+font-size:22px;
+font-weight:600;
+margin-top:25px;
+color:#7dd3fc;
+}
+
+.event-log{
+background:#0f172a;
+padding:15px;
+border-radius:10px;
+border:1px solid #1e293b;
+font-family:monospace;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 st.title("🏥 AI ICU Guardian – Patient Monitoring Dashboard")
 
 # ----------------------------------------------------------
-# AUTO DEMO MODE
+# DEMO MODE
 # ----------------------------------------------------------
 
 st.sidebar.subheader("Demo Mode")
-
 demo_mode = st.sidebar.toggle("Enable Live ICU Simulation", value=True)
 
 # ----------------------------------------------------------
@@ -38,7 +75,7 @@ patients={
 }
 
 # ----------------------------------------------------------
-# SIDEBAR PATIENT SELECTION
+# SIDEBAR CONTROL PANEL
 # ----------------------------------------------------------
 
 st.sidebar.header("ICU Control Panel")
@@ -61,16 +98,21 @@ c2.metric("Beds Available",20-len(patients))
 c3.metric("Hospital AI System","ACTIVE")
 c4.metric("Monitoring Mode","Realtime")
 
-# Auto refresh only in demo mode
+# ----------------------------------------------------------
+# AUTO REFRESH
+# ----------------------------------------------------------
+
 if demo_mode:
     st_autorefresh(interval=1500,key="icu_refresh")
 
 # ----------------------------------------------------------
-# CURRENT PATIENT INFO
+# CURRENT PATIENT
 # ----------------------------------------------------------
 
-st.subheader(f"Monitoring Patient ID: {selected_patient}")
-st.write(f"Assigned ICU Bed: {patients[selected_patient]}")
+st.markdown('<div class="section">Monitoring Patient</div>',unsafe_allow_html=True)
+
+st.write(f"Patient ID: **{selected_patient}**")
+st.write(f"Assigned ICU Bed: **{patients[selected_patient]}**")
 
 # ----------------------------------------------------------
 # BASELINE VITALS
@@ -102,6 +144,7 @@ if "rr_data" not in st.session_state:
     st.session_state.rr_data=list(resp_rate+np.random.normal(0,0.5,40))
 
 # Demo simulation
+
 if demo_mode:
 
     new_hr = st.session_state.hr_data[-1] + np.random.normal(0,2)
@@ -131,7 +174,7 @@ rr_data=st.session_state.rr_data
 # LIVE VITALS
 # ----------------------------------------------------------
 
-st.subheader("Live Patient Vital Signs")
+st.markdown('<div class="section">Live Patient Vital Signs</div>',unsafe_allow_html=True)
 
 v1,v2,v3=st.columns(3)
 
@@ -143,17 +186,27 @@ v3.metric("Respiratory Rate",f"{round(new_rr,1)} /min")
 # ECG MONITOR
 # ----------------------------------------------------------
 
-st.subheader("Real-Time ECG Monitor")
+st.markdown('<div class="section">Real-Time ECG Monitor</div>',unsafe_allow_html=True)
 
 t=np.linspace(0,1,200)
 ecg=np.sin(20*np.pi*t)+np.random.normal(0,0.1,200)
 
 fig_ecg=go.Figure()
-fig_ecg.add_trace(go.Scatter(y=ecg,mode="lines"))
 
-fig_ecg.update_layout(template="plotly_dark",height=300)
+fig_ecg.add_trace(go.Scatter(
+y=ecg,
+mode="lines",
+line=dict(color="#00ff9c",width=2)
+))
 
-st.plotly_chart(fig_ecg,width="stretch")
+fig_ecg.update_layout(
+template="plotly_dark",
+height=300,
+plot_bgcolor="black",
+margin=dict(l=20,r=20,t=20,b=20)
+)
+
+st.plotly_chart(fig_ecg,use_container_width=True)
 
 # ----------------------------------------------------------
 # VITAL TRENDS
@@ -169,7 +222,7 @@ with col1:
     fig_hr.add_trace(go.Scatter(y=hr_data,mode="lines"))
     fig_hr.update_layout(template="plotly_dark")
 
-    st.plotly_chart(fig_hr,width="stretch")
+    st.plotly_chart(fig_hr,use_container_width=True)
 
 with col2:
 
@@ -179,10 +232,10 @@ with col2:
     fig_spo2.add_trace(go.Scatter(y=spo2_data,mode="lines"))
     fig_spo2.update_layout(template="plotly_dark")
 
-    st.plotly_chart(fig_spo2,width="stretch")
+    st.plotly_chart(fig_spo2,use_container_width=True)
 
 # ----------------------------------------------------------
-# RESPIRATORY RATE
+# RESP RATE TREND
 # ----------------------------------------------------------
 
 st.subheader("Respiratory Rate Trend")
@@ -191,13 +244,13 @@ fig_rr=go.Figure()
 fig_rr.add_trace(go.Scatter(y=rr_data,mode="lines"))
 fig_rr.update_layout(template="plotly_dark")
 
-st.plotly_chart(fig_rr,width="stretch")
+st.plotly_chart(fig_rr,use_container_width=True)
 
 # ----------------------------------------------------------
 # NEWS SCORE
 # ----------------------------------------------------------
 
-st.subheader("Early Warning Score (NEWS)")
+st.markdown('<div class="section">Early Warning Score (NEWS)</div>',unsafe_allow_html=True)
 
 ews=0
 
@@ -213,10 +266,10 @@ if new_rr>22:
 st.metric("NEWS Score",ews)
 
 # ----------------------------------------------------------
-# AI CLINICAL RECOMMENDATION
+# AI RECOMMENDATION
 # ----------------------------------------------------------
 
-st.subheader("AI Clinical Recommendation")
+st.markdown('<div class="section">AI Clinical Recommendation</div>',unsafe_allow_html=True)
 
 recommendation=""
 
@@ -224,13 +277,13 @@ if new_spo2<92:
     recommendation+="⚠ Oxygen saturation critically low.\n\n"
 
 elif new_spo2<95:
-    recommendation+="⚠ Oxygen saturation slightly below optimal.\n\n"
+    recommendation+="⚠ Oxygen slightly low.\n\n"
 
 if new_hr>110:
-    recommendation+="⚠ Elevated heart rate detected.\n\n"
+    recommendation+="⚠ Elevated heart rate.\n\n"
 
 elif new_hr<60:
-    recommendation+="⚠ Low heart rate detected.\n\n"
+    recommendation+="⚠ Low heart rate.\n\n"
 
 if new_rr>22:
     recommendation+="⚠ Respiratory distress suspected.\n\n"
@@ -241,7 +294,7 @@ if recommendation=="":
 st.info(recommendation)
 
 # ----------------------------------------------------------
-# LSTM AI MODEL
+# LSTM MODEL
 # ----------------------------------------------------------
 
 class LSTMModel(nn.Module):
@@ -277,7 +330,7 @@ model=load_model()
 # AI RISK PREDICTION
 # ----------------------------------------------------------
 
-st.subheader("AI Patient Risk Prediction")
+st.markdown('<div class="section">AI Patient Risk Prediction</div>',unsafe_allow_html=True)
 
 input_data=np.array([
 hr_data[-20:],
@@ -292,22 +345,19 @@ with torch.no_grad():
 
 risk=float(prediction.item()*100)
 
-# Demo fluctuation
 if demo_mode:
-    risk += random.uniform(-5,5)
-    risk=max(0,min(100,risk))
+    risk+=random.uniform(-5,5)
 
-# Occasional deterioration event
-if demo_mode and random.random() < 0.05:
-    risk += random.uniform(15,25)
-    risk=max(0,min(100,risk))
+risk=max(0,min(100,risk))
 
 if risk<40:
     st.success("Patient stable → Continue monitoring")
+
 elif risk<70:
-    st.warning("Moderate risk → Increase monitoring frequency")
+    st.warning("Moderate risk → Increase monitoring")
+
 else:
-    st.error("High risk → Immediate ICU intervention")
+    st.error("High risk → Immediate intervention")
 
 # ----------------------------------------------------------
 # RISK GAUGE
@@ -316,24 +366,27 @@ else:
 fig=go.Figure(go.Indicator(
 mode="gauge+number",
 value=risk,
-title={'text':"Patient Risk Meter"},
+title={'text':"AI Patient Risk Score"},
 gauge={
 'axis':{'range':[0,100]},
+'bar':{'color':"#00bfff"},
 'steps':[
-{'range':[0,40],'color':"green"},
-{'range':[40,70],'color':"yellow"},
-{'range':[70,100],'color':"red"}
+{'range':[0,40],'color':"#15803d"},
+{'range':[40,70],'color':"#facc15"},
+{'range':[70,100],'color':"#dc2626"}
 ]
 }
 ))
 
-st.plotly_chart(fig,width="stretch")
+fig.update_layout(height=400)
+
+st.plotly_chart(fig,use_container_width=True)
 
 # ----------------------------------------------------------
 # EVENT LOG
 # ----------------------------------------------------------
 
-st.subheader("Patient Event Log")
+st.markdown('<div class="section">Patient Event Log</div>',unsafe_allow_html=True)
 
 if "event_log" not in st.session_state:
     st.session_state.event_log=[]
@@ -345,14 +398,18 @@ event=f"{time} | HR {round(new_hr)} | SpO2 {round(new_spo2)}"
 st.session_state.event_log.insert(0,event)
 st.session_state.event_log=st.session_state.event_log[:10]
 
+st.markdown('<div class="event-log">',unsafe_allow_html=True)
+
 for e in st.session_state.event_log:
     st.write(e)
 
+st.markdown('</div>',unsafe_allow_html=True)
+
 # ----------------------------------------------------------
-# DIGITAL TWIN SIMULATION
+# DIGITAL TWIN
 # ----------------------------------------------------------
 
-st.subheader("24 Hour Patient Digital Twin")
+st.markdown('<div class="section">24 Hour Patient Digital Twin</div>',unsafe_allow_html=True)
 
 hours=np.arange(1,25)
 

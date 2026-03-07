@@ -6,6 +6,32 @@ from fpdf import FPDF
 import matplotlib.pyplot as plt
 import tempfile
 
+st.set_page_config(layout="wide")
+
+# ----------------------------------------------------
+# PROFESSIONAL STYLE
+# ----------------------------------------------------
+
+st.markdown("""
+<style>
+
+body{
+background-color:#050c18;
+}
+
+.metric{
+font-size:32px;
+font-weight:600;
+}
+
+button[kind="secondary"]{
+background-color:#1f2937;
+border-radius:8px;
+}
+
+</style>
+""",unsafe_allow_html=True)
+
 st.title("📄 ICU Patient Report Generator")
 
 # ----------------------------------------------------
@@ -46,11 +72,11 @@ st.subheader("Patient Vital Summary")
 
 c1,c2,c3=st.columns(3)
 
-c1.metric("Heart Rate",f"{heart_rate} bpm")
-c2.metric("SpO₂",f"{spo2} %")
-c3.metric("Resp Rate",f"{rr} /min")
+c1.metric("🟢 Heart Rate",f"{heart_rate} bpm")
+c2.metric("🟡 SpO₂",f"{spo2} %")
+c3.metric("🔵 Resp Rate",f"{rr} /min")
 
-st.metric("AI Risk Score",f"{round(risk,1)} %")
+st.metric("🔴 AI Risk Score",f"{round(risk,1)} %")
 
 # ----------------------------------------------------
 # PDF REPORT CLASS
