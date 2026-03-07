@@ -71,7 +71,7 @@ c2.metric("Available Beds",20-len(df))
 c3.metric("Average Risk",round(df["Risk"].mean(),1))
 
 # ------------------------------------------------
-# RISK DISTRIBUTION PIE
+# RISK DISTRIBUTION PIE (BIG PROFESSIONAL CHART)
 # ------------------------------------------------
 
 st.subheader("Patient Risk Distribution")
@@ -87,19 +87,31 @@ values=[low,mid,high],
 
 marker=dict(
 colors=[
-"#22c55e",  # green
-"#facc15",  # yellow
-"#ef4444"   # red
+"#22c55e",   # green
+"#facc15",   # yellow
+"#ef4444"    # red
 ]
 ),
 
 hole=0.35,
-textinfo="percent+label"
+textinfo="percent+label",
+textfont=dict(size=18)
+
 )])
 
 fig.update_layout(
+
 template="plotly_dark",
-height=420
+height=650,
+
+legend=dict(
+orientation="h",
+yanchor="bottom",
+y=1.05,
+xanchor="center",
+x=0.5
+)
+
 )
 
 st.plotly_chart(fig,use_container_width=True)
@@ -152,7 +164,6 @@ fig3=go.Figure(go.Bar(
 
 x=beds,
 y=[1]*len(beds),
-
 marker_color="#3b82f6"
 
 ))
