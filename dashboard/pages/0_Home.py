@@ -1,8 +1,7 @@
 import streamlit as st
 import time
 
-st.set_page_config(page_title="AI ICU Guardian", layout="wide")
-
+st.set_page_config(page_title="AI ICU Guardian", layout="wide", initial_sidebar_state="expanded")
 # -------------------------------------------------------
 # ADVANCED UI STYLE
 # -------------------------------------------------------

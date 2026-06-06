@@ -102,7 +102,28 @@ patients = {
 }
 
 # ------------------------------------------------
-# SIDEBAR
+# ADD NEW PATIENT (NEW FEATURE)
+# ------------------------------------------------
+
+st.sidebar.markdown("### ➕ Register New Patient")
+
+with st.sidebar.form("add_patient"):
+
+    new_id = st.text_input("Patient ID")
+    new_name = st.text_input("Patient Name")
+
+    add_patient = st.form_submit_button("Add Patient")
+
+    if add_patient:
+
+        if new_id and new_name:
+            patients[new_id] = new_name
+            st.sidebar.success("Patient added successfully")
+        else:
+            st.sidebar.error("Enter both Patient ID and Name")
+
+# ------------------------------------------------
+# SIDEBAR PATIENT SELECT
 # ------------------------------------------------
 
 selected_patient = st.sidebar.selectbox(
@@ -219,3 +240,56 @@ for e in events:
     st.write(f"• {e}")
 
 st.markdown('</div>',unsafe_allow_html=True)
+
+# ------------------------------------------------
+# MANUAL VITAL ENTRY (NEW FEATURE)
+# ------------------------------------------------
+
+st.markdown('<div class="section">Enter Patient Vitals</div>', unsafe_allow_html=True)
+
+with st.form("vitals_form"):
+
+    colA,colB,colC = st.columns(3)
+
+    with colA:
+        heart_rate = st.number_input("Heart Rate (bpm)",40,200)
+
+    with colB:
+        spo2 = st.number_input("SpO2 (%)",70,100)
+
+    with colC:
+        temperature = st.number_input("Temperature (°C)",30.0,42.0)
+
+    blood_pressure = st.number_input("Blood Pressure (mmHg)",50,200)
+
+    submit_vitals = st.form_submit_button("Submit Vitals")
+
+    if submit_vitals:
+
+        st.success("Vitals submitted to ICU AI monitoring system")
+
+        st.write("### Current Recorded Vitals")
+
+        st.write("Heart Rate:",heart_rate,"bpm")
+        st.write("SpO2:",spo2,"%")
+        st.write("Temperature:",temperature,"°C")
+        st.write("Blood Pressure:",blood_pressure,"mmHg")
+
+        # ------------------------------------------------
+# UPLOAD PATIENT REPORT
+# ------------------------------------------------
+
+import pandas as pd
+
+st.markdown('<div class="section">Upload Patient Medical Report</div>', unsafe_allow_html=True)
+
+uploaded_file = st.file_uploader(
+    "Upload patient report (CSV)",
+    type=["csv"]
+)
+
+if uploaded_file is not None:
+    data = pd.read_csv(uploaded_file)
+
+    st.write("### Report Data")
+    st.dataframe(data)
