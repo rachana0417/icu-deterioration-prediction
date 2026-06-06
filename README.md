@@ -38,3 +38,17 @@ streamlit run dashboard/app.py
 ```
 
 ## 📁 Project Structure
+├── dashboard/
+│   ├── pages/
+│   │   ├── 0_Home.py
+│   │   ├── 1_Patient_Profile.py
+│   │   ├── 2_ICU_Dashboard.py
+│   │   └── ...
+│   └── app.py
+├── data/
+├── models/
+│   └── lstm_model.pth
+├── training/
+└── utils/
+## 👩‍💻 Author
+**Rachana Nagaraj** — [github.com/rachana0417](https://github.com/rachana0417)
